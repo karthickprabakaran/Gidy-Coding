@@ -33,12 +33,6 @@ function Navbar() {
                 View Products
               </Link>
               <h2 className="text-teal-400 font-semibold">{user.name}</h2>
-              <button
-                onClick={handleLogout}
-                className="text-sm font-medium text-gray-300 hover:text-teal-400 transition duration-300"
-              >
-                Logout
-              </button>
             </>
           ) : (
             <>
