@@ -51,7 +51,8 @@ cd Gidy-Coding
 ```
 
 2. Set up the Backend
-	•	Change MongoDB URI: Open the backend .env file and replace the default MongoDB URI with your own.
+
+Change MongoDB URI: Open the backend .env file and replace the default MongoDB URI with your own.
 
 ```
 MONGODB_URI=your-mongodb-uri
