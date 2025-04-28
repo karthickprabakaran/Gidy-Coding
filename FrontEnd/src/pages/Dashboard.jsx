@@ -63,14 +63,22 @@ function Dashboard() {
   };
 
   // Handle delete button click
-  const handleDelete = async (id) => {
+  const handleDelete = async (productId) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/products/${id}`);
-      if (response.status === 200) {
-        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+      const response = await fetch(`http://localhost:3000/api/products/${productId}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        // If successful, remove the product from the state
+        setProducts((prevProducts) => prevProducts.filter(product => product._id !== productId));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Failed to delete the product');
       }
     } catch (error) {
       console.error('Error deleting product:', error);
+      alert('An error occurred while deleting the product.');
     }
   };
 
