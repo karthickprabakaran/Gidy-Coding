@@ -1,49 +1,44 @@
-import React, { useState } from 'react'
-import Navbar from '../components/Navbar'
-import NotesModal from '../components/NotesModal';
+import React from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  const [isModelopen, setIsModelOpen] = useState(false);
-
-  const closeModal = ()=>{
-    setIsModelOpen(false);
-  }
-
-  const addNote = async (title, description) => {
-    try {
-        const response = await axios.post('http://localhost:3000/api/note/add', { title, description }, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        });
-        if (response.data.success) {
-            navigate('/'); 
-            
-            closeModal(); 
-        } else {
-            console.error('Error:', response.data.message || 'Failed to create note');
-        }
-    } catch (error) {
-        console.error('Error during addNote request:', error.response ? error.response.data : error.message);
-    }
-};
-
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <Navbar />
-      <h2>Home</h2>
-      <button 
-        onClick={()=>
-          setIsModelOpen( !isModelopen) }
-        className='fixed right-4 bottom-4 text-2xl bg-teal-500 text-white font-bold'>+</button>
-        {isModelopen && <NotesModal 
-        closeModal = {closeModal}
-        addNote = {addNote}
-        />}
-    </div>
-  )
+    <>
+      <div className="navbar bg-base-100 shadow-md fixed top-0 left-0 right-0 z-50">
+        <div className="flex-1">
+          <a className="btn btn-ghost text-xl">Product Inventory</a>
+        </div>
+        <div className="flex-none hidden md:flex gap-4">
+          <button className="btn btn-ghost" onClick={() => navigate('/login')}>Login</button>
+          <button className="btn btn-ghost" onClick={() => navigate('/signup')}>Signup</button>
+          <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>Dashboard</button>
+        </div>
+      </div>
+
+      <div
+        className="hero min-h-screen pt-20"
+        style={{
+          backgroundImage:
+            "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
+        }}
+      >
+        <div className="hero-overlay"></div>
+        <div className="hero-content text-neutral-content text-center">
+          <div className="max-w-md">
+            <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
+            <p className="mb-5">
+              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+              quasi. In deleniti eaque aut repudiandae et a id nisi.
+            </p>
+            <button className="btn btn-primary">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default Home
+export default Home;
