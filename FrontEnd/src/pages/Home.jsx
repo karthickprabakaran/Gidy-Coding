@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  return (
+
+  const navigate = useNavigate();
+  return(
+
 
     < div className="bg-white h-full min-h-screen">
     <Navbar />
@@ -17,7 +21,7 @@ const Home = () => {
         </h3>
         <p className="text-base md:text-lg text-slate-700 my-4 md:my-6">
         An App Developed by <a href="https://karthickprabakaran.github.io/Portfolio/" target="_blank" rel="noopener noreferrer" className="text-blue underline">Karthick Prabakaran</a> For Secure and Easy Product Stock Management.        </p>
-        <button className="bg-indigo-500 text-white font-medium py-2 px-4 rounded transition-all hover:bg-indigo-600 active:scale-95">
+        <button className="bg-indigo-500 text-white font-medium py-2 px-4 rounded transition-all hover:bg-indigo-600 active:scale-95" onClick={()=>{navigate('/signup')}}>
           Get Started
         </button>
       </div>

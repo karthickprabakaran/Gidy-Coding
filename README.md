@@ -8,6 +8,20 @@ The **Product Inventory Dashboard** is a web-based application that allows users
 
 The app is built with **React** for the frontend and communicates with a **Node.js** backend. The backend exposes APIs for managing product data, and the frontend handles the user interface.
 
+## Screenshots
+
+### Landing Page
+![Landing Page](./Landing.png)
+
+### Login Page
+![Login Page](./Login.png)
+
+### Signup Page
+![Signup Page](./Signup.png)
+
+### Dashboard Page
+![Dashboard Page](./Dashboard.png)
+
 ## Features
 
 - **View Product List**: Display a list of all products in the inventory.
