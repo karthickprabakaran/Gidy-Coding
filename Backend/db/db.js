@@ -1,14 +1,18 @@
-import mongoose from 'mongoose' ;
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const dbConnection  = async() =>{
-    try{
-        await mongoose.connect("mongodb+srv://karthick:hello@product.joyvvo4.mongodb.net/?retryWrites=true&w=majority&appName=Product");
-        console.log("Database Connection Successfull..");
-    }
-    catch(error)
-    {
-        console.log(error);
-        
+dotenv.config();
+
+const dbConnection = async () => {
+    try {
+        const mongoURI = process.env.MONGO_URI;
+        await mongoose.connect(mongoURI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("Database Connection Successful..");
+    } catch (error) {
+        console.error("Database Connection Failed: ", error);
     }
 };
 
