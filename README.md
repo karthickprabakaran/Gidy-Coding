@@ -110,16 +110,25 @@ http://localhost:5173
 - **DELETE `/api/products/:id`**: Delete a product from the inventory.
 - **GET `/api/products/totals`**: Get the total stock and total value of all products.
 
-## Future Enhancements
+## Security Features
 
-- **Authentication**: Implement JWT authentication for secure access to the dashboard.
-- **Sorting**: Add sorting functionality for products based on different parameters (e.g., price, stock).
-- **Export**: Implement CSV or PDF export options for the product list.
+### 1. **JWT Authentication**
+   - Secures access to API routes by issuing a token upon successful login.
+   - Token is stored on the client side and sent with each request to authenticate.
 
-## Contributing
+### 2. **SQL Injection Protection**
+   - Use parameterized queries or ORMs like **Mongoose** to prevent SQL injection attacks.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to your branch (`git push origin feature/your-feature`)
-5. Create a new Pull Request
+### 3. **Cross-Site Scripting (XSS) Protection**
+   - Sanitize user input to prevent malicious scripts from being executed on the frontend.
+   - Use libraries like **DOMPurify** to clean user-generated content.
+
+### 4. **CORS**
+   - Configure **CORS** middleware to restrict access to your API from authorized domains only.
+
+### 5. **Environment Variables (.env)**
+   - Store sensitive information (e.g., JWT secret, MongoDB URI) securely in an `.env` file.
+   - Use the **dotenv** package to load these variables into the application.
+
+
+
