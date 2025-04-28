@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 function SignUp() {
   const [name, setName] = useState('');
@@ -28,14 +29,13 @@ function SignUp() {
   };
 
   return (
+
+    <>
+    <Navbar />
     <div className="flex min-h-screen flex-col justify-center items-center bg-gray-50 px-6 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <img
-            alt="Logo"
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-12 w-auto"
-          />
+          
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Create your account
           </h2>
@@ -116,6 +116,7 @@ function SignUp() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

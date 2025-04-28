@@ -4,6 +4,7 @@ import axios from 'axios';
 import Modal from '../components/Modal'; // Import Modal component
 import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
+import Navbar from '../components/Navbar';
 
 function Dashboard() {
   const [products, setProducts] = useState([]);
@@ -125,6 +126,9 @@ function Dashboard() {
   }
 
   return (
+
+    <>
+    <Navbar />
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Product Dashboard</h1>
 
@@ -213,6 +217,7 @@ function Dashboard() {
       {/* Toast Container */}
       <ToastContainer />
     </div>
+    </>
   );
 }
 
