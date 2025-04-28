@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ProductBox from '../components/Product-box';
+import ProductBox from '../components/Product-box';  // Display products here
 import axios from 'axios';
 import Modal from '../components/Modal'; // Import Modal component
 
@@ -62,10 +62,22 @@ function Dashboard() {
     setIsModalOpen(true);
   };
 
+  // Handle delete button click
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/api/products/${id}`);
+      if (response.status === 200) {
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
   // Toggle modal visibility
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-    setProductToEdit(null);
+    setProductToEdit(null); // Reset when closing modal
   };
 
   // Show loading state while products are being fetched
@@ -90,13 +102,21 @@ function Dashboard() {
         ) : (
           products.map((product) => (
             <div key={product._id}>
-              <ProductBox product={product} />
-              <button
-                onClick={() => handleEdit(product)}
-                className="mt-2 inline-block px-6 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200"
-              >
-                Edit
-              </button>
+              <ProductBox product={product} /> {/* Display product here */}
+              <div className="flex space-x-2 mt-2">
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product._id)}
+                  className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         )}

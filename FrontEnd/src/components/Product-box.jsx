@@ -1,31 +1,22 @@
 import React from 'react';
 
-function ProductBox({ product, onEdit, onDelete }) {
-  const { id, name, description, price, imageUrl } = product;
-
+const ProductBox = ({ product }) => {
   return (
-    <div className="border p-4 rounded-lg shadow-md">
-      <img src={imageUrl} alt={name} className="w-full h-40 object-cover rounded-md mb-4" />
-      <h3 className="text-xl font-semibold mb-2">{name}</h3>
-      <p className="text-gray-700 mb-2">{description}</p>
-      <p className="font-medium text-gray-900 mb-4">Price: ${price}</p>
-
-      <div className="flex justify-between items-center">
-        <button
-          onClick={() => onEdit({ id, name, description, price, imageUrl })}
-          className="px-4 py-2 bg-yellow-500 text-white rounded-md"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => onDelete(id)}
-          className="px-4 py-2 bg-red-600 text-white rounded-md"
-        >
-          Delete
-        </button>
+    <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6">
+      <img
+        src={product.image}
+        alt={product.name}
+        className="w-full h-60 object-cover rounded-lg mb-4"
+      />
+      <h3 className="text-xl font-semibold text-gray-800 truncate">{product.name}</h3>
+      <p className="text-gray-600 text-sm mt-2">{product.description}</p>
+      <div className="mt-4 flex justify-between items-center">
+        <p className="text-lg font-bold text-green-600">{`$${product.price}`}</p>
+        <span className="text-sm text-gray-500">Qty: {product.quantity}</span>
       </div>
+      
     </div>
   );
-}
+};
 
 export default ProductBox;

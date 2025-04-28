@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/ContextProvider';
+import { Navigate } from 'react-router-dom';
 
 function Navbar() {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  
+  const navigate = useNavigate();
 
   return (
     <nav className="w-full bg-white shadow-lg rounded-md px-4 py-3 lg:px-8 lg:py-4 mt-10">
@@ -72,14 +75,14 @@ function Navbar() {
           {user ? (
             <>
               <Link
-                to="/add-product"
+                to="/dashboard"
                 className="text-sm font-medium text-slate-600 hover:text-blue-600 transition duration-300"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => Navigate('/dashboard')}
               >
                 Add Product
               </Link>
               <Link
-                to="/view-products"
+                to="/dashboard"
                 className="text-sm font-medium text-slate-600 hover:text-blue-600 transition duration-300"
                 onClick={() => setMenuOpen(false)}
               >
