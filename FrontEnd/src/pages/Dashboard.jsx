@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ProductBox from '../components/Product-box';  // Display products here
+import ProductBox from '../components/Product-box'; // Display products here
 import axios from 'axios';
 import Modal from '../components/Modal'; // Import Modal component
 
@@ -85,7 +85,9 @@ function Dashboard() {
   // Toggle modal visibility
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-    setProductToEdit(null); // Reset when closing modal
+    if (!isModalOpen) {
+      setProductToEdit(null); // Reset when opening modal for adding a new product
+    }
   };
 
   // Show loading state while products are being fetched
@@ -96,17 +98,18 @@ function Dashboard() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Product Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      {/* Add New Product Button Always Visible */}
+      <button
+        onClick={toggleModal}
+        className="mt-4 inline-block px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+      >
+        Add New Product
+      </button>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {products.length === 0 ? (
-          <>
-            <p>No products found</p>
-            <button
-              onClick={toggleModal}
-              className="mt-4 inline-block px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Add New Product
-            </button>
-          </>
+          <p>No products found</p>
         ) : (
           products.map((product) => (
             <div key={product._id}>
@@ -130,10 +133,11 @@ function Dashboard() {
         )}
       </div>
 
+      {/* Ensure that isModalOpen prop is correctly passed */}
       <Modal
         isOpen={isModalOpen}
         toggleModal={toggleModal}
-        product={productToEdit}
+        product={productToEdit || {}}  // Pass empty object when adding new product
         onSubmit={handleSubmit}
       />
     </div>
