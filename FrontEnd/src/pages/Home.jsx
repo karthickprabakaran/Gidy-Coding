@@ -1,23 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 function Home() {
   const navigate = useNavigate();
 
   return (
     <>
-      <div className="navbar bg-base-100 shadow-md fixed top-0 left-0 right-0 z-50">
-        <div className="flex-1">
-          <a className="btn btn-ghost text-xl">Product Inventory</a>
-        </div>
-        <div className="flex-none hidden md:flex gap-4">
-          <button className="btn btn-ghost" onClick={() => navigate('/login')}>Login</button>
-          <button className="btn btn-ghost" onClick={() => navigate('/signup')}>Signup</button>
-          <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>Dashboard</button>
-        </div>
-      </div>
-
+     
+    <Navbar />
       <div
         className="hero min-h-screen pt-20"
         style={{
@@ -33,7 +25,7 @@ function Home() {
               Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
               quasi. In deleniti eaque aut repudiandae et a id nisi.
             </p>
-            <button className="btn btn-primary">Get Started</button>
+            <button className="btn btn-primary" onClick={()=>{navigate('/signup')}}>Get Started</button>
           </div>
         </div>
       </div>

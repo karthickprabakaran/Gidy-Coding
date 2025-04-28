@@ -1,0 +1,104 @@
+import React, { useEffect, useState } from 'react';
+import ProductBox from '../components/Product-box';
+import axios from 'axios';
+import Modal from '../components/Modal'; // Import Modal component
+
+function Dashboard() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null); // Track which product is being edited
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/products'); // Correct URL
+        if (Array.isArray(response.data)) {
+          setProducts(response.data);
+        } else {
+          console.error('Expected an array of products, but got:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleSubmit = async (productData) => {
+    try {
+      if (productToEdit) {
+        // Editing an existing product
+        const response = await axios.put(`http://localhost:3000/api/products/${productToEdit._id}`, productData); // Correct URL
+        const updatedProducts = products.map((product) =>
+          product._id === productToEdit._id ? response.data : product
+        );
+        setProducts(updatedProducts);
+      } else {
+        const response = await axios.post('http://localhost:3000/api/products', productData); // Correct URL
+        setProducts((prevState) => [...prevState, response.data]);
+      }
+      setIsModalOpen(false);
+      setProductToEdit(null); // Reset after submit
+    } catch (error) {
+      console.error('Error submitting product:', error);
+    }
+  };
+
+  const handleEdit = (product) => {
+    setProductToEdit(product);
+    setIsModalOpen(true);
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+    setProductToEdit(null); 
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-semibold mb-4">Product Dashboard</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {products.length === 0 ? (
+          <>
+            <p>No products found</p>
+            <button
+              onClick={toggleModal}
+              className="mt-4 inline-block px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+            >
+              Add New Product
+            </button>
+          </>
+        ) : (
+          products.map((product) => (
+            <div key={product._id}>
+              <ProductBox product={product} />
+              <button
+                onClick={() => handleEdit(product)}
+                className="mt-2 inline-block px-6 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200"
+              >
+                Edit
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        toggleModal={toggleModal}
+        product={productToEdit} 
+        onSubmit={handleSubmit}
+      />
+    </div>
+  );
+}
+
+export default Dashboard;
