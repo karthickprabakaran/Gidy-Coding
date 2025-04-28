@@ -2,7 +2,7 @@ import mongoose from 'mongoose' ;
 
 const dbConnection  = async() =>{
     try{
-        await mongoose.connect("mongodb+srv://karthick:<db_password>@product.joyvvo4.mongodb.net/?retryWrites=true&w=majority&appName=Product");
+        await mongoose.connect("mongodb+srv://karthick:hello@product.joyvvo4.mongodb.net/?retryWrites=true&w=majority&appName=Product");
         console.log("Database Connection Successfull..");
     }
     catch(error)
