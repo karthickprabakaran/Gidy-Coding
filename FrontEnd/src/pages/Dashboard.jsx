@@ -2,31 +2,39 @@ import React, { useEffect, useState } from 'react';
 import ProductBox from '../components/Product-box'; // Display products here
 import axios from 'axios';
 import Modal from '../components/Modal'; // Import Modal component
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 
 function Dashboard() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null); // Track which product is being edited
+  const [searchQuery, setSearchQuery] = useState(''); // State for the search query
 
-  // Fetch products when the component mounts
+  const [totalStock, setTotalStock] = useState(0); // Total stock
+  const [totalAmount, setTotalAmount] = useState(0); // Total value of stock
+
+  // Fetch products and totals when the component mounts
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProductsAndTotals = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/products'); // No token needed
-        if (Array.isArray(response.data)) {
-          setProducts(response.data);
-        } else {
-          console.error('Expected an array of products, but got:', response.data);
-        }
+        // Fetch products
+        const productResponse = await axios.get('http://localhost:3000/api/products');
+        setProducts(productResponse.data);
+
+        // Fetch totals
+        const totalsResponse = await axios.get('http://localhost:3000/api/products/totals');
+        setTotalStock(totalsResponse.data.totalStock);
+        setTotalAmount(totalsResponse.data.totalAmount);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchProductsAndTotals();
   }, []);
 
   // Handle form submission for adding/editing products
@@ -43,16 +51,25 @@ function Dashboard() {
           product._id === productToEdit._id ? response.data : product
         );
         setProducts(updatedProducts);
+        toast.success('Product updated successfully!'); // Toast on success
       } else {
         // Adding a new product
         const response = await axios.post('http://localhost:3000/api/products', productData);
-        setProducts((prevState) => [...prevState, response.data]);
+        const updatedProducts = [...products, response.data];
+        setProducts(updatedProducts);
+        toast.success('Product added successfully!'); // Toast on success
       }
+
+      // Recalculate totals after update or add
+      const totalsResponse = await axios.get('http://localhost:3000/api/products/totals');
+      setTotalStock(totalsResponse.data.totalStock);
+      setTotalAmount(totalsResponse.data.totalAmount);
 
       setIsModalOpen(false);
       setProductToEdit(null); // Reset after submit
     } catch (error) {
       console.error('Error submitting product:', error);
+      toast.error('Error while adding or updating the product!'); // Toast on error
     }
   };
 
@@ -68,19 +85,31 @@ function Dashboard() {
       const response = await fetch(`http://localhost:3000/api/products/${productId}`, {
         method: 'DELETE',
       });
-  
+
       if (response.ok) {
         // If successful, remove the product from the state
-        setProducts((prevProducts) => prevProducts.filter(product => product._id !== productId));
+        const updatedProducts = products.filter((product) => product._id !== productId);
+        setProducts(updatedProducts);
+        toast.success('Product deleted successfully!'); // Toast on success
+
+        // Recalculate totals after delete
+        const totalsResponse = await axios.get('http://localhost:3000/api/products/totals');
+        setTotalStock(totalsResponse.data.totalStock);
+        setTotalAmount(totalsResponse.data.totalAmount);
       } else {
         const errorData = await response.json();
-        alert(errorData.message || 'Failed to delete the product');
+        toast.error(errorData.message || 'Failed to delete the product'); // Toast on error
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('An error occurred while deleting the product.');
+      toast.error('An error occurred while deleting the product.'); // Toast on error
     }
   };
+
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Toggle modal visibility
   const toggleModal = () => {
@@ -99,6 +128,46 @@ function Dashboard() {
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Product Dashboard</h1>
 
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search products..."
+          className="w-full p-2 border rounded-md"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Modernized Total Stock and Total Amount */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-4">Totals Overview</h2>
+
+        <div className="flex space-x-4">
+          {/* Total Stock */}
+          <div className="flex items-center p-4 bg-white shadow-lg rounded-lg w-1/2">
+            <div className="flex items-center justify-center bg-blue-100 p-3 rounded-full mr-4">
+            <p>🗳️</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Total Stock</p>
+              <p className="text-lg font-bold text-gray-800">{totalStock}</p>
+            </div>
+          </div>
+
+          {/* Total Amount */}
+          <div className="flex items-center p-4 bg-white shadow-lg rounded-lg w-1/2">
+            <div className="flex items-center justify-center bg-green-100 p-3 rounded-full mr-4 text-black">
+              <p>$</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Total Amount</p>
+              <p className="text-lg font-bold text-gray-800">₹{totalAmount.toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Add New Product Button Always Visible */}
       <button
         onClick={toggleModal}
@@ -108,10 +177,10 @@ function Dashboard() {
       </button>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <p>No products found</p>
         ) : (
-          products.map((product) => (
+          filteredProducts.map((product) => (
             <div key={product._id}>
               <ProductBox product={product} /> {/* Display product here */}
               <div className="flex space-x-2 mt-2">
@@ -140,6 +209,9 @@ function Dashboard() {
         product={productToEdit || {}}  // Pass empty object when adding new product
         onSubmit={handleSubmit}
       />
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }

@@ -7,11 +7,12 @@ const productRouter = express.Router();
 productRouter.get('/', async (req, res) => {
     try {
         const products = await Product.find();
-        if (!products) {
+        if (!products || products.length === 0) {
             return res.status(404).json({ message: 'No products found' });
         }
         res.json(products);
     } catch (error) {
+        console.error('Error fetching products:', error);
         res.status(500).json({ message: 'Error fetching products' });
     }
 });
@@ -30,6 +31,7 @@ productRouter.post('/', async (req, res) => {
         const savedProduct = await newProduct.save();
         res.status(201).json(savedProduct);
     } catch (error) {
+        console.error('Error saving product:', error);
         res.status(400).json({ message: 'Error saving product' });
     }
 });
@@ -55,7 +57,33 @@ productRouter.put('/:id', async (req, res) => {
 
         res.json(updatedProduct);
     } catch (error) {
+        console.error('Error updating product:', error);
         res.status(400).json({ message: 'Error updating product' });
+    }
+});
+
+// Get totals (total stock and total amount)
+productRouter.get('/totals', async (req, res) => {
+    try {
+      // Aggregate the total stock and total price using the correct field name 'quantity'
+      const totals = await Product.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalStock: { $sum: '$quantity' }, // Make sure we use 'quantity' here
+            totalAmount: { $sum: { $multiply: ['$quantity', '$price'] } },
+          },
+        },
+      ]);
+  
+      if (totals.length === 0) {
+        return res.status(404).json({ message: 'No products found to calculate totals' });
+      }
+  
+      res.json(totals[0]); // Return the totals
+    } catch (error) {
+      console.error('Error calculating totals:', error);
+      res.status(500).json({ message: 'Error calculating totals' });
     }
 });
 
@@ -70,6 +98,7 @@ productRouter.delete('/:id', async (req, res) => {
 
         res.json({ message: 'Product deleted successfully' });
     } catch (error) {
+        console.error('Error deleting product:', error);
         res.status(500).json({ message: 'Error deleting product' });
     }
 });
