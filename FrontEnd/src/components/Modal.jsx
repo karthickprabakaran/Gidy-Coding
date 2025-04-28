@@ -8,6 +8,7 @@ function Modal({ isOpen, toggleModal, product, onSubmit }) {
     image: ''
   });
 
+  // Set form data when editing a product
   useEffect(() => {
     if (product) {
       setFormData({
@@ -19,6 +20,7 @@ function Modal({ isOpen, toggleModal, product, onSubmit }) {
     }
   }, [product]);
 
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -27,11 +29,13 @@ function Modal({ isOpen, toggleModal, product, onSubmit }) {
     }));
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(formData); // Pass form data back to parent (Dashboard) component
   };
 
+  // Return null if modal is not open
   if (!isOpen) return null;
 
   return (

@@ -9,7 +9,7 @@ const middleware = async (req, res, next) => {
             return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
         }
 
-        const decoded = jwt.verify(token, "secret"); 
+        const decoded = jwt.verify(token, "secret");  
 
         if (!decoded) {
             return res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });
@@ -21,10 +21,12 @@ const middleware = async (req, res, next) => {
             return res.status(401).json({ success: false, message: "Unauthorized: User not found" });
         }
 
-        req.user = { id: user._id, name: user.name };
-        next(); 
-
+        req.user = { id: user._id, name: user.name }; 
+        next();  
     } catch (error) {
+        if (error instanceof jwt.JsonWebTokenError) {
+            return res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });
+        }
         console.error(error); 
         return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }

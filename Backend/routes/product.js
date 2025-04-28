@@ -1,11 +1,10 @@
-// routes/product.js
 import express from 'express';
 import Product from '../models/Product.js'; 
-import middleware from '../middleware/middleware.js'; 
 
 const productRouter = express.Router();
 
-productRouter.get('/', middleware, async (req, res) => {
+// Get all products
+productRouter.get('/', async (req, res) => {
     try {
         const products = await Product.find();
         if (!products) {
@@ -17,7 +16,8 @@ productRouter.get('/', middleware, async (req, res) => {
     }
 });
 
-productRouter.post('/', middleware, async (req, res) => {
+// Add a new product
+productRouter.post('/', async (req, res) => {
     const { name, price, quantity, image } = req.body;
 
     if (!name || !price || !quantity || !image) {
@@ -34,7 +34,8 @@ productRouter.post('/', middleware, async (req, res) => {
     }
 });
 
-productRouter.put('/:id', middleware, async (req, res) => {
+// Update an existing product
+productRouter.put('/:id', async (req, res) => {
     const { name, price, quantity, image } = req.body;
 
     if (!name || !price || !quantity || !image) {

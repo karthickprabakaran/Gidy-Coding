@@ -9,10 +9,11 @@ function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null); // Track which product is being edited
 
+  // Fetch products when the component mounts
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/products'); // Correct URL
+        const response = await axios.get('http://localhost:3000/api/products'); // No token needed
         if (Array.isArray(response.data)) {
           setProducts(response.data);
         } else {
@@ -28,19 +29,26 @@ function Dashboard() {
     fetchProducts();
   }, []);
 
+  // Handle form submission for adding/editing products
   const handleSubmit = async (productData) => {
     try {
       if (productToEdit) {
         // Editing an existing product
-        const response = await axios.put(`http://localhost:3000/api/products/${productToEdit._id}`, productData); // Correct URL
+        const response = await axios.put(
+          `http://localhost:3000/api/products/${productToEdit._id}`,
+          productData
+        );
+
         const updatedProducts = products.map((product) =>
           product._id === productToEdit._id ? response.data : product
         );
         setProducts(updatedProducts);
       } else {
-        const response = await axios.post('http://localhost:3000/api/products', productData); // Correct URL
+        // Adding a new product
+        const response = await axios.post('http://localhost:3000/api/products', productData);
         setProducts((prevState) => [...prevState, response.data]);
       }
+
       setIsModalOpen(false);
       setProductToEdit(null); // Reset after submit
     } catch (error) {
@@ -48,16 +56,19 @@ function Dashboard() {
     }
   };
 
+  // Handle edit button click
   const handleEdit = (product) => {
     setProductToEdit(product);
     setIsModalOpen(true);
   };
 
+  // Toggle modal visibility
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-    setProductToEdit(null); 
+    setProductToEdit(null);
   };
 
+  // Show loading state while products are being fetched
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -94,7 +105,7 @@ function Dashboard() {
       <Modal
         isOpen={isModalOpen}
         toggleModal={toggleModal}
-        product={productToEdit} 
+        product={productToEdit}
         onSubmit={handleSubmit}
       />
     </div>
